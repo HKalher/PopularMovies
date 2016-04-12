@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.kalher.henu.popularmovies.MainActivity">
+    <item
+        android:id="@+id/popular_movies"
+        android:orderInCategory="2"
+        android:title="Popular Movies" />
+    <item
+        android:id="@+id/highest_rated"
+        android:orderInCategory="1"
+        android:title="Top Rated" />
+</menu>
