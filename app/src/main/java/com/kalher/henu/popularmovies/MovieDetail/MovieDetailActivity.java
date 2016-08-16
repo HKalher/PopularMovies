@@ -55,7 +55,11 @@ public class MovieDetailActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("MovieImageList",Parcels.wrap(MIR));
+        try{
+            outState.putParcelable("MovieImageList",Parcels.wrap(MIR));
+        }catch (NullPointerException e){
+            outState.putParcelable("MovieImageList",null);
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -127,28 +131,34 @@ public class MovieDetailActivity extends Activity {
 
         if(savedInstanceState != null){
             MIR = Parcels.unwrap(savedInstanceState.getParcelable("MovieImageList"));
-            BackdropAdapter ba = new BackdropAdapter(MIR.getImageResult().subList(0,10),getApplicationContext());
-            ImageList_RecyclerView.setAdapter(ba);
+            if(MIR != null){
+                BackdropAdapter ba = new BackdropAdapter(MIR.getImageResult().subList(0,10),getApplicationContext());
+                ImageList_RecyclerView.setAdapter(ba);
+            }else {
+                APICall(mid);
+            }
         }else {
-            MovieApiInterface service = ApiClient.getApiClient();
-            Call<MovieImagesResult> call = service.getBackdrops(mid);
-
-            call.enqueue(new Callback<MovieImagesResult>() {
-                @Override
-                public void onResponse(Call<MovieImagesResult> call, Response<MovieImagesResult> response) {
-                    MIR = response.body();
-                    List<MovieImages> MI = MIR.getImageResult().subList(0,10);
-                    BackdropAdapter ba = new BackdropAdapter(MI,getApplicationContext());
-                    ImageList_RecyclerView.setAdapter(ba);
-                }
-
-                @Override
-                public void onFailure(Call<MovieImagesResult> call, Throwable t) {
-
-                }
-            });
-
+            APICall(mid);
         }
+    }
+    private void APICall(String mid){
+        MovieApiInterface service = ApiClient.getApiClient();
+        Call<MovieImagesResult> call = service.getBackdrops(mid);
+
+        call.enqueue(new Callback<MovieImagesResult>() {
+            @Override
+            public void onResponse(Call<MovieImagesResult> call, Response<MovieImagesResult> response) {
+                MIR = response.body();
+                List<MovieImages> MI = MIR.getImageResult().subList(0,10);
+                BackdropAdapter ba = new BackdropAdapter(MI,getApplicationContext());
+                ImageList_RecyclerView.setAdapter(ba);
+            }
+
+            @Override
+            public void onFailure(Call<MovieImagesResult> call, Throwable t) {
+
+            }
+        });
     }
     private String getMovieDetail(PopularMovies movie){
         String detail;

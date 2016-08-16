@@ -25,7 +25,7 @@ public class ApiClient {
                 Request originalRequest = chain.request();
                 HttpUrl originalHttpUrl = originalRequest.url();
                 HttpUrl mUrl = originalHttpUrl.newBuilder()
-                        .addQueryParameter("api_key","put your api key here")
+                        .addQueryParameter("api_key","b99f54d84b337288971f1cca257d4a7f")
                         .build();
                 Request.Builder requestBuilder  = originalRequest.newBuilder()
                         .url(mUrl);

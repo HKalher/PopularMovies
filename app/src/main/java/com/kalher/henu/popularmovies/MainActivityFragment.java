@@ -50,8 +50,6 @@ public class MainActivityFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         toast = Toast.makeText(getContext(),"Fetching data from server",Toast.LENGTH_SHORT);
-        toast.show();
-
         recyclerView = (RecyclerView) getView().findViewById(R.id.cardGrid);
         recyclerView.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),getColumns());
@@ -60,8 +58,12 @@ public class MainActivityFragment extends Fragment {
 
         if(savedInstanceState != null){
             PopularMovieResult movieResult = Parcels.unwrap(savedInstanceState.getParcelable("parced_movieList"));
-            MyAdapter adapter = new MyAdapter(movieResult.getMovieList(), getContext());
-            recyclerView.setAdapter(adapter);
+            if(movieResult != null){
+                MyAdapter adapter = new MyAdapter(movieResult.getMovieList(), getContext());
+                recyclerView.setAdapter(adapter);
+            }else {
+                APICall("popular_movies");
+            }
         }else {
             APICall("popular_movies");
         }
@@ -69,7 +71,11 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("parced_movieList",Parcels.wrap(new PopularMovieResult(result.getMovieList())));
+        try{
+            outState.putParcelable("parced_movieList",Parcels.wrap(new PopularMovieResult(result.getMovieList())));
+        }catch (NullPointerException e){
+            outState.putParcelable("parced_movieList",Parcels.wrap(new PopularMovieResult(null)));
+        }
         super.onSaveInstanceState(outState);
     }
 
